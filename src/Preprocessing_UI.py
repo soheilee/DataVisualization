@@ -53,7 +53,7 @@ class MyMainWindow(QMainWindow):
         self.ui.ScreeningFile.clicked.connect(self.visualizeFile)
         self.ui.addButton.clicked.connect(self.openFileDialog)
         self.ui.removeButton.clicked.connect(self.removeSelectedFile)
-        self.ui.SelectedFile_textEdit.textChanged.connect(self.updateRemoveButtonState)
+        
 
     def openFileDialog(self):
         file_dialog = QFileDialog(self)
@@ -61,21 +61,20 @@ class MyMainWindow(QMainWindow):
         file_dialog.setViewMode(QFileDialog.Detail)
         filenames, _ = file_dialog.getOpenFileNames(self, "Open CSV Files", "", "CSV files (*.csv)")
         if filenames:
-            for filename in filenames:
                 # Add selected file names to the text edit
-                self.ui.SelectedFile_textEdit.append(filename)
-            self.updateRemoveButtonState()
+            self.ui.SelectedFile_listWidget.addItems(filenames)
+         
 
     def removeSelectedFile(self):
         # Get the currently selected text
-        selected_text = self.ui.SelectedFile_textEdit.textCursor().selectedText()
-        if selected_text:
-            cursor = self.ui.SelectedFile_textEdit.textCursor()
-            cursor.removeSelectedText()
+        selected_item = self.ui.SelectedFile_listWidget.currentItem()
+        if selected_item:
+            self.ui.SelectedFile_listWidget.takeItem(self.ui.SelectedFile_listWidget.row(selected_item))
+            self.updateRemoveButtonState()
 
     def updateRemoveButtonState(self):
         # Enable the removeButton if there's selected text, otherwise disable it
-        self.ui.removeButton.setEnabled(bool(self.ui.SelectedFile_textEdit.toPlainText()))
+        self.ui.removeButton.setEnabled(bool(self.ui.SelectedFile_listWidget.selectedItems()))
 
     def visualizeFile(self):
         file_dialog = QFileDialog(self)
