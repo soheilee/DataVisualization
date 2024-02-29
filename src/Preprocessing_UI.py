@@ -1,10 +1,10 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTextEdit
-from PyQt5.QtGui import QIcon, QCursor, QTextCursor  # Add this import
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTextEdit, QListWidget
+from PyQt5.QtGui import QIcon
 import os
 import csv
 import matplotlib.pyplot as plt
 from Preprocessing_UI_Layout import Ui_winMain
-from PyQt5.QtWidgets import QTextEdit
+
 
 
 class MyMainWindow(QMainWindow):
@@ -20,6 +20,9 @@ class MyMainWindow(QMainWindow):
 
         # Connect signals to slots
         self.connect_signals()
+
+         # Enable multi-selection mode for the list widget
+        self.ui.SelectedFile_listWidget.setSelectionMode(QListWidget.MultiSelection)
 
         
 
@@ -52,7 +55,7 @@ class MyMainWindow(QMainWindow):
         # Connect signals to slots
         self.ui.ScreeningFile.clicked.connect(self.visualizeFile)
         self.ui.addButton.clicked.connect(self.openFileDialog)
-        self.ui.removeButton.clicked.connect(self.removeSelectedFile)
+        self.ui.removeButton.clicked.connect(self.removeSelectedFiles)
         
 
     def openFileDialog(self):
@@ -65,12 +68,13 @@ class MyMainWindow(QMainWindow):
             self.ui.SelectedFile_listWidget.addItems(filenames)
          
 
-    def removeSelectedFile(self):
-        # Get the currently selected text
-        selected_item = self.ui.SelectedFile_listWidget.currentItem()
-        if selected_item:
-            self.ui.SelectedFile_listWidget.takeItem(self.ui.SelectedFile_listWidget.row(selected_item))
-            self.updateRemoveButtonState()
+    def removeSelectedFiles(self):
+        # Get the currently selected items
+        selected_items = self.ui.SelectedFile_listWidget.selectedItems()
+        for item in selected_items:
+            self.ui.SelectedFile_listWidget.takeItem(self.ui.SelectedFile_listWidget.row(item))
+        self.updateRemoveButtonState()
+
 
     def updateRemoveButtonState(self):
         # Enable the removeButton if there's selected text, otherwise disable it
