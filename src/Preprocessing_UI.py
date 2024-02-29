@@ -53,6 +53,32 @@ class MyMainWindow(QMainWindow):
     def connect_signals(self):
         # Connect signals to slots
         self.ui.ScreeningFile.clicked.connect(self.visualizeFile)
+        self.ui.addButton.clicked.connect(self.openFileDialog)
+        self.ui.removeButton.clicked.connect(self.removeSelectedFile)
+        self.ui.SelectedFile_textEdit.textChanged.connect(self.updateRemoveButtonState)
+        self.ui.SelectedFile_textEdit.setMouseTracking(True)
+
+    def openFileDialog(self):
+        file_dialog = QFileDialog(self)
+        file_dialog.setNameFilter("CSV files (*.csv)")
+        file_dialog.setViewMode(QFileDialog.Detail)
+        filenames, _ = file_dialog.getOpenFileNames(self, "Open CSV Files", "", "CSV files (*.csv)")
+        if filenames:
+            for filename in filenames:
+                # Add selected file names to the text edit
+                self.ui.SelectedFile_textEdit.append(filename)
+            self.updateRemoveButtonState()
+
+    def removeSelectedFile(self):
+        # Get the currently selected text
+        selected_text = self.ui.SelectedFile_textEdit.textCursor().selectedText()
+        if selected_text:
+            cursor = self.ui.SelectedFile_textEdit.textCursor()
+            cursor.removeSelectedText()
+
+    def updateRemoveButtonState(self):
+        # Enable the removeButton if there's selected text, otherwise disable it
+        self.ui.removeButton.setEnabled(bool(self.ui.SelectedFile_textEdit.textCursor().selectedText()))
 
     def zoom_in(self):
         self.ui.toolbar.zoom()
@@ -71,7 +97,6 @@ class MyMainWindow(QMainWindow):
         if filename:
             data = self.read_csv(filename)
             if data:
-                print("great!")
                 self.ui.figure.clear()
                 ax = self.ui.figure.add_subplot(111)
                 ax.scatter(data["time"], data["adc_counts"])

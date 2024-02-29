@@ -21,7 +21,7 @@
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="iconSize">
        <size>
@@ -60,25 +60,6 @@
                <height>574</height>
               </rect>
              </property>
-             <widget class="QWidget" name="horizontalLayoutWidget">
-              <property name="geometry">
-               <rect>
-                <x>711</x>
-                <y>500</y>
-                <width>171</width>
-                <height>41</height>
-               </rect>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_3">
-               <item>
-                <widget class="QPushButton" name="ScreeningFile">
-                 <property name="text">
-                  <string>Select File</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
              <widget class="QWidget" name="verticalLayoutWidget_2">
               <property name="geometry">
                <rect>
@@ -104,6 +85,19 @@
                </item>
               </layout>
              </widget>
+             <widget class="QPushButton" name="ScreeningFile">
+              <property name="geometry">
+               <rect>
+                <x>710</x>
+                <y>500</y>
+                <width>169</width>
+                <height>71</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>Select File</string>
+              </property>
+             </widget>
             </widget>
            </widget>
           </item>
@@ -125,6 +119,75 @@
        <attribute name="toolTip">
         <string>Filtering</string>
        </attribute>
+       <widget class="QWidget" name="verticalLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>891</width>
+          <height>571</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QTextEdit" name="SelectedFile_textEdit"/>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="seletFile_label">
+             <property name="text">
+              <string>Add/Remove files:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="addButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Add</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="removeButton">
+             <property name="text">
+              <string>Remove</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
       </widget>
       <widget class="QWidget" name="wSetting">
        <attribute name="icon">
