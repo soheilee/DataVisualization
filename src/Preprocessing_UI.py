@@ -3,7 +3,7 @@ import csv
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QWidget, QRadioButton
 from PyQt5.QtCore import QDir
 from PyQt5.QtGui import QIcon
-from Variolytics_Preprocessing_UI_Layout import Ui_winMain  # Import the generated UI class
+from Preprocessing_UI_Layout import Ui_winMain  # Import the generated UI class
 import subprocess
 import matplotlib.pyplot as plt
 
@@ -46,6 +46,9 @@ class MyMainWindow(QMainWindow):
         for tab_index, icon_name in tab_icon_paths.items():
             icon_path = os.path.join(icons_dir, icon_name)
             self.ui.tbwMain.setTabIcon(tab_index, QIcon(icon_path))
+        # Set application icon
+        app_icon_path = os.path.join(icons_dir, 'app_icon.png')
+        app.setWindowIcon(QIcon(app_icon_path))
 
     def connect_signals(self):
         # Connect signals to slots
@@ -65,10 +68,10 @@ class MyMainWindow(QMainWindow):
         file_dialog.setNameFilter("CSV files (*.csv)")
         file_dialog.setViewMode(QFileDialog.Detail)
         filename, _ = file_dialog.getOpenFileName(self, "Open CSV File", "", "CSV files (*.csv)")
-        
         if filename:
             data = self.read_csv(filename)
             if data:
+                print("great!")
                 self.ui.figure.clear()
                 ax = self.ui.figure.add_subplot(111)
                 ax.scatter(data["time"], data["adc_counts"])
@@ -89,7 +92,7 @@ class MyMainWindow(QMainWindow):
                     data["adc_counts"].append(float(row["adc_counts"]))
                     # Extract filename without the path
             filename_without_path = os.path.basename(filename)
-            self.ui.label_2.setText(f"Bright Cycle Preview:{filename_without_path}")
+            self.ui.Plot_label.setText(f"Bright Cycle Preview:{filename_without_path}")
             return data
         except Exception as e:
             print("Error reading CSV:", e)

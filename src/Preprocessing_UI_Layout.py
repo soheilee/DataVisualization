@@ -108,8 +108,6 @@ class Ui_winMain(object):
         self.stbStatusbar = QtWidgets.QStatusBar(winMain)
         self.stbStatusbar.setObjectName("stbStatusbar")
         winMain.setStatusBar(self.stbStatusbar)
-        
-
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
         self.verticalLayout_4.addWidget(self.canvas)
