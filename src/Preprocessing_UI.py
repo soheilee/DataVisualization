@@ -1,15 +1,11 @@
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTextEdit
+from PyQt5.QtGui import QIcon, QCursor, QTextCursor  # Add this import
 import os
 import csv
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QWidget, QRadioButton
-from PyQt5.QtCore import QDir
-from PyQt5.QtGui import QIcon
-from Preprocessing_UI_Layout import Ui_winMain  # Import the generated UI class
-import subprocess
 import matplotlib.pyplot as plt
+from Preprocessing_UI_Layout import Ui_winMain
+from PyQt5.QtWidgets import QTextEdit
 
-class CustomWidget(QWidget):
-    def __init__(self):
-        super().__init__()
 
 class MyMainWindow(QMainWindow):
     def __init__(self):
@@ -25,6 +21,8 @@ class MyMainWindow(QMainWindow):
         # Connect signals to slots
         self.connect_signals()
 
+        
+
     def load_icons(self):
         # Get the path to the icons directory relative to the current file
         icons_dir = os.path.join(os.path.dirname(__file__), 'icons')
@@ -33,10 +31,10 @@ class MyMainWindow(QMainWindow):
             'ScreeningFile': 'Data_Visualization.png',
         }
         tab_icon_paths = {
-        0: 'main_screening.png',
-        1: 'main_filtering.png',
-        2: 'main_setting.png',
-        3: 'main_help.png'
+            0: 'main_screening.png',
+            1: 'main_filtering.png',
+            2: 'main_setting.png',
+            3: 'main_help.png'
         }
         # Load icons for individual widgets
         for widget_name, icon_name in icon_paths.items():
@@ -48,7 +46,7 @@ class MyMainWindow(QMainWindow):
             self.ui.tbwMain.setTabIcon(tab_index, QIcon(icon_path))
         # Set application icon
         app_icon_path = os.path.join(icons_dir, 'app_icon.png')
-        app.setWindowIcon(QIcon(app_icon_path))
+        self.setWindowIcon(QIcon(app_icon_path))
 
     def connect_signals(self):
         # Connect signals to slots
@@ -56,7 +54,6 @@ class MyMainWindow(QMainWindow):
         self.ui.addButton.clicked.connect(self.openFileDialog)
         self.ui.removeButton.clicked.connect(self.removeSelectedFile)
         self.ui.SelectedFile_textEdit.textChanged.connect(self.updateRemoveButtonState)
-        self.ui.SelectedFile_textEdit.setMouseTracking(True)
 
     def openFileDialog(self):
         file_dialog = QFileDialog(self)
@@ -78,17 +75,8 @@ class MyMainWindow(QMainWindow):
 
     def updateRemoveButtonState(self):
         # Enable the removeButton if there's selected text, otherwise disable it
-        self.ui.removeButton.setEnabled(bool(self.ui.SelectedFile_textEdit.textCursor().selectedText()))
+        self.ui.removeButton.setEnabled(bool(self.ui.SelectedFile_textEdit.toPlainText()))
 
-    def zoom_in(self):
-        self.ui.toolbar.zoom()
-    def zoom_out(self):
-        self.ui.toolbar.zoom(-1)
-    def pan(self):
-        self.ui.toolbar.pan()
-    def home(self):
-        self.ui.toolbar.home()
-    
     def visualizeFile(self):
         file_dialog = QFileDialog(self)
         file_dialog.setNameFilter("CSV files (*.csv)")
@@ -115,7 +103,6 @@ class MyMainWindow(QMainWindow):
                 for row in reader:
                     data["time"].append(float(row["time"]))
                     data["adc_counts"].append(float(row["adc_counts"]))
-                    # Extract filename without the path
             filename_without_path = os.path.basename(filename)
             self.ui.Plot_label.setText(f"Bright Cycle Preview:{filename_without_path}")
             return data
@@ -123,11 +110,6 @@ class MyMainWindow(QMainWindow):
             print("Error reading CSV:", e)
             return None
 
-
-
-            
-            
-        
 
 if __name__ == "__main__":
     import sys
