@@ -82,19 +82,19 @@ class ScatterPlotWindow(QMainWindow):
             if data:
                 self.figure.clear()
                 ax = self.figure.add_subplot(111)
-                ax.scatter(data["time"], data["counts"])
+                ax.scatter(data["time"], data["adc_counts"])
                 ax.set_xlabel("time")
-                ax.set_ylabel("counts")
+                ax.set_ylabel("adc_counts")
                 self.canvas.draw()
 
     def read_csv(self, filename):
         try:
             with open(filename, "r") as file:
                 reader = csv.DictReader(file)
-                data = {"time": [], "counts": []}
+                data = {"time": [], "adc_counts": []}
                 for row in reader:
                     data["time"].append(float(row["time"]))
-                    data["counts"].append(float(row["counts"]))
+                    data["adc_counts"].append(float(row["adc_counts"]))
                 return data
         except Exception as e:
             print("Error reading CSV:", e)
