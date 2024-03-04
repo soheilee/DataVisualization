@@ -150,7 +150,7 @@ class Ui_winMain(object):
 
     def retranslateUi(self, winMain):
         _translate = QtCore.QCoreApplication.translate
-        winMain.setWindowTitle(_translate("winMain", "Roche HTP Internal Tool"))
+        winMain.setWindowTitle(_translate("winMain", "Preprocessing UI"))
         self.ScreeningFile.setText(_translate("winMain", "Select File"))
         self.removeButton.setText(_translate("winMain", "Remove"))
         self.addButton.setText(_translate("winMain", "Add"))
