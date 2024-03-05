@@ -1,10 +1,9 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTextEdit, QListWidget
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTextEdit, QListWidget, QSizePolicy
+from PyQt5.QtGui import QIcon, QPixmap
 import os
 import csv
 import matplotlib.pyplot as plt
 from Preprocessing_UI_Layout import Ui_winMain
-
 
 
 class MyMainWindow(QMainWindow):
@@ -21,10 +20,10 @@ class MyMainWindow(QMainWindow):
         # Connect signals to slots
         self.connect_signals()
 
-         # Enable multi-selection mode for the list widget
+        # Enable multi-selection mode for the list widget
         self.ui.SelectedFile_listWidget.setSelectionMode(QListWidget.MultiSelection)
-
-        
+        # Set tab size policy to expand to fit content
+        self.ui.tbwMain.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
     def load_icons(self):
         # Get the path to the icons directory relative to the current file
@@ -46,7 +45,8 @@ class MyMainWindow(QMainWindow):
         # Load icons for tab icons
         for tab_index, icon_name in tab_icon_paths.items():
             icon_path = os.path.join(icons_dir, icon_name)
-            self.ui.tbwMain.setTabIcon(tab_index, QIcon(icon_path))
+            icon = QIcon(QPixmap(icon_path).scaled(24, 24))  # Adjust the size as needed
+            self.ui.tbwMain.setTabIcon(tab_index, icon)
         # Set application icon
         app_icon_path = os.path.join(icons_dir, 'app_icon.png')
         self.setWindowIcon(QIcon(app_icon_path))
@@ -56,7 +56,6 @@ class MyMainWindow(QMainWindow):
         self.ui.ScreeningFile.clicked.connect(self.visualizeFile)
         self.ui.addButton.clicked.connect(self.openFileDialog)
         self.ui.removeButton.clicked.connect(self.removeSelectedFiles)
-        
 
     def openFileDialog(self):
         file_dialog = QFileDialog(self)
@@ -64,9 +63,8 @@ class MyMainWindow(QMainWindow):
         file_dialog.setViewMode(QFileDialog.Detail)
         filenames, _ = file_dialog.getOpenFileNames(self, "Open CSV Files", "", "CSV files (*.csv)")
         if filenames:
-                # Add selected file names to the text edit
+            # Add selected file names to the text edit
             self.ui.SelectedFile_listWidget.addItems(filenames)
-         
 
     def removeSelectedFiles(self):
         # Get the currently selected items
@@ -74,7 +72,6 @@ class MyMainWindow(QMainWindow):
         for item in selected_items:
             self.ui.SelectedFile_listWidget.takeItem(self.ui.SelectedFile_listWidget.row(item))
         self.updateRemoveButtonState()
-
 
     def updateRemoveButtonState(self):
         # Enable the removeButton if there's selected text, otherwise disable it
@@ -92,7 +89,7 @@ class MyMainWindow(QMainWindow):
                 ax = self.ui.figure.add_subplot(111)
                 ax.scatter(data["time"], data["adc_counts"])
                 # Adjust x-axis label position:
-                ax.set_xlabel("time (s)", labelpad=15) # Increase labelpad to 15 points
+                ax.set_xlabel("time (s)", labelpad=15)  # Increase labelpad to 15 points
                 ax.set_ylabel("adc_counts")
                 # Optionally, adjust bottom margin for more space:
                 plt.subplots_adjust(bottom=0.25)
