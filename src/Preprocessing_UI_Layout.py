@@ -1,3 +1,5 @@
+import sys
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import (
     QApplication,
@@ -9,10 +11,12 @@ from PyQt5.QtWidgets import (
     QAction,
 )
 from PyQt5.QtCore import Qt
-import sys
+from PyQt5.QtGui import QIcon
+
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+
 
 
 class Ui_winMain(object):
@@ -50,6 +54,20 @@ class Ui_winMain(object):
         self.ScreeningFile = QtWidgets.QPushButton(self.horizontalLayoutWidget)
         self.ScreeningFile.setObjectName("ScreeningFile")
         self.horizontalLayout_3.addWidget(self.ScreeningFile)
+        # Increase the font and button size of the ScreeningFile button
+        button_font = QtGui.QFont()
+        button_font.setPointSize(12)  # Adjust the font size as needed
+        button_font.setBold(True)  # Make the font bold
+        self.ScreeningFile.setFont(button_font)
+
+        # Set size policy for the button
+        self.ScreeningFile.setSizePolicy(
+            QtWidgets.QSizePolicy.Fixed,
+            QtWidgets.QSizePolicy.Fixed
+        )
+        # Increase the size of the push button
+        self.ScreeningFile.setFixedSize(150, 40)  # Adjust the width and height as needed
+        
         self.verticalLayoutWidget_2 = QtWidgets.QWidget(self.scrollAreaWidgetContents)
         self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(10, 0, 871, 491))
         self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
@@ -59,11 +77,15 @@ class Ui_winMain(object):
         self.Plot_label = QtWidgets.QLabel(self.verticalLayoutWidget_2)
         self.Plot_label.setObjectName("Plot_label")
         self.verticalLayout_4.addWidget(self.Plot_label)
+        # Set font size for the "Data Preview" label
+        font = QtGui.QFont()
+        font.setPointSize(12)  # Adjust the font size as needed
+        font.setBold(True)  # Make the font bold
+        self.Plot_label.setFont(font)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout_2.addWidget(self.scrollArea)
         self.gridLayout_8.addLayout(self.verticalLayout_2, 0, 0, 1, 2)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/mainTab/icons/main_engineering.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tbwMain.addTab(self.wDataScreening, icon, "")
         
         self.wFiltering = QtWidgets.QWidget()
@@ -77,9 +99,33 @@ class Ui_winMain(object):
         self.verticalLayout.setObjectName("verticalLayout")
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.verticalLayout.addItem(spacerItem)
+        # Add a label above the QListWidget
+        self.labelAboveListWidget = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.labelAboveListWidget.setObjectName("labelAboveListWidget")
+        self.labelAboveListWidget.setText("Selected Files:")
+        # Set font size for the label (adjust as needed)
+        label_font = QtGui.QFont()
+        label_font.setPointSize(12)
+        label_font.setBold(True)
+        self.labelAboveListWidget.setFont(label_font)
+
+        # Set size policy for the label
+        self.labelAboveListWidget.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Fixed
+        )
+
+        self.verticalLayout.addWidget(self.labelAboveListWidget)
+       
         self.SelectedFile_listWidget = QtWidgets.QListWidget(self.verticalLayoutWidget)
         self.SelectedFile_listWidget.setObjectName("listWidget")
+        # Set size policy for the QListWidget
+        self.SelectedFile_listWidget.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout.addWidget(self.SelectedFile_listWidget)
+        
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -87,17 +133,104 @@ class Ui_winMain(object):
         self.seletFile_label = QtWidgets.QLabel(self.verticalLayoutWidget)
         self.seletFile_label.setObjectName("seletFile_label")
         self.horizontalLayout.addWidget(self.seletFile_label)
+        seletFile_label_font = QtGui.QFont()
+        seletFile_label_font.setPointSize(12)
+        seletFile_label_font.setBold(True)
+        self.seletFile_label.setFont(seletFile_label_font)
+
+        # Set size policy for the label
+        self.seletFile_label.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Fixed
+        )
         self.addButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.addButton.setEnabled(True)
         self.addButton.setObjectName("addButton")
         self.horizontalLayout.addWidget(self.addButton)
+        addButton_font = QtGui.QFont()
+        addButton_font.setPointSize(12)
+        addButton_font.setBold(True)
+        self.addButton.setFont(addButton_font)
+
+        # Set size policy for the label
+        self.addButton.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Fixed
+        )
         self.removeButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.removeButton.setObjectName("removeButton")
         self.horizontalLayout.addWidget(self.removeButton)
+        removeButton_font = QtGui.QFont()
+        removeButton_font.setPointSize(12)
+        removeButton_font.setBold(True)
+        self.removeButton.setFont(removeButton_font)
+
+        # Set size policy for the label
+        self.removeButton.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Fixed
+        )
         self.verticalLayout.addLayout(self.horizontalLayout)
         
+        
+        # Add a label above the second QListWidget
+        self.labelAboveListWidget2 = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.labelAboveListWidget2.setObjectName("labelAboveListWidget2")
+        self.labelAboveListWidget2.setText("Filtered Files:")
+        # Set font size for the label (adjust as needed)
+        label_font = QtGui.QFont()
+        label_font.setPointSize(12)
+        label_font.setBold(True)
+        self.labelAboveListWidget2.setFont(label_font)
+
+        # Set size policy for the label
+        self.labelAboveListWidget2.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Fixed
+        )
+
+        self.verticalLayout.addWidget(self.labelAboveListWidget2)
+       
+        # Add a second QListWidget for filtered files
+        self.FilteredFile_listWidget = QtWidgets.QListWidget(self.verticalLayoutWidget)
+        self.FilteredFile_listWidget.setObjectName("FilteredFile_listWidget")
+        # Set size policy for the second QListWidget
+        self.FilteredFile_listWidget.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Expanding
+        )
+        self.verticalLayout.addWidget(self.FilteredFile_listWidget)
+        
+        # Create a horizontal layout for the Filter button
+        self.horizontalLayoutFilter = QtWidgets.QHBoxLayout()
+        self.horizontalLayoutFilter.setObjectName("horizontalLayoutFilter")
+        spacerItemFilter = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayoutFilter.addItem(spacerItemFilter)
+        
+        # Add the Filter button to the horizontal layout
+        self.filterButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.filterButton.setObjectName("filterButton")
+        self.filterButton.setText("Filter")
+        filterButton_font = QtGui.QFont()
+        filterButton_font.setPointSize(12)
+        filterButton_font.setBold(True)
+        self.filterButton.setFont(filterButton_font)
+        
+        # Set size policy for the Filter button
+        self.filterButton.setSizePolicy(
+            QtWidgets.QSizePolicy.Fixed,  # Use Fixed size policy to prevent expanding
+            QtWidgets.QSizePolicy.Fixed
+        )
+        
+        # Add the Filter button to the horizontal layout
+        self.horizontalLayoutFilter.addWidget(self.filterButton)
+        
+        # Add the horizontal layout to the main vertical layout
+        self.verticalLayout.addLayout(self.horizontalLayoutFilter)
+        
+        
+        
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/mainTab/icons/main_diagnosis.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tbwMain.addTab(self.wFiltering, icon1, "")
         self.wSetting = QtWidgets.QWidget()
         self.wSetting.setObjectName("wSetting")
@@ -108,7 +241,6 @@ class Ui_winMain(object):
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/mainTab/icons/main_setting.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tbwMain.addTab(self.wSetting, icon2, "")
         self.wHelp = QtWidgets.QWidget()
         self.wHelp.setObjectName("wHelp")
@@ -125,7 +257,6 @@ class Ui_winMain(object):
         self.tbwHelp.addTab(self.wManual, "")
         self.gridLayout_6.addWidget(self.tbwHelp, 0, 0, 1, 1)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/mainTab/icons/main_help.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tbwMain.addTab(self.wHelp, icon3, "")
         self.gridLayout.addWidget(self.tbwMain, 0, 1, 1, 1)
         winMain.setCentralWidget(self.centralwidget)
@@ -138,25 +269,39 @@ class Ui_winMain(object):
         winMain.setStatusBar(self.stbStatusbar)
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
+        # Increase the size of the canvas
+        self.canvas.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Expanding
+        )
         self.verticalLayout_4.addWidget(self.canvas)
         # Add a toolbar for zoom, pan, and home
         self.toolbar = NavigationToolbar(self.canvas)
         self.verticalLayout_4.addWidget(self.toolbar)
 
+        # Set font size and minimum width for the tabs
+        tab_style = "QTabBar::tab { font-size: 11pt; min-width: 150px; }"
+        self.tbwMain.setStyleSheet(tab_style)  
+        
         self.retranslateUi(winMain)
         self.tbwMain.setCurrentIndex(0)
         self.tbwHelp.setCurrentIndex(1)
+        self.tbwMain.setTabEnabled(2, False)
+        self.tbwMain.setTabEnabled(3, False)
         QtCore.QMetaObject.connectSlotsByName(winMain)
 
     def retranslateUi(self, winMain):
         _translate = QtCore.QCoreApplication.translate
-        winMain.setWindowTitle(_translate("winMain", "Preprocessing UI"))
+        winMain.setWindowTitle(_translate("winMain", "Preprocessing Tool"))
+        # Create a bold font
+        bold_font_Tab = QtGui.QFont()
+        bold_font_Tab.setBold(True)
         self.ScreeningFile.setText(_translate("winMain", "Select File"))
         self.removeButton.setText(_translate("winMain", "Remove"))
         self.addButton.setText(_translate("winMain", "Add"))
         self.seletFile_label.setText(_translate("winMain","Add/Remove files:"))
         self.Plot_label.setText(_translate("winMain", "Data Preview:"))
-        self.tbwMain.setTabText(self.tbwMain.indexOf(self.wDataScreening), _translate("winMain", "Data Screening"))
+        self.tbwMain.setTabText(self.tbwMain.indexOf(self.wDataScreening), _translate("winMain", "Screening"))
         self.tbwMain.setTabToolTip(self.tbwMain.indexOf(self.wDataScreening), _translate("winMain", "DataScreening"))
         self.tbwMain.setTabText(self.tbwMain.indexOf(self.wFiltering), _translate("winMain", "Filtering"))
         self.tbwMain.setTabToolTip(self.tbwMain.indexOf(self.wFiltering), _translate("winMain", "Filtering"))
@@ -165,6 +310,7 @@ class Ui_winMain(object):
         self.tbwHelp.setTabText(self.tbwHelp.indexOf(self.wVideo), _translate("winMain", "Video"))
         self.tbwHelp.setTabText(self.tbwHelp.indexOf(self.wManual), _translate("winMain", "Manual"))
         self.tbwMain.setTabText(self.tbwMain.indexOf(self.wHelp), _translate("winMain", "Help"))
+        self.tbwMain.tabBar().setFont(bold_font_Tab)
 
 
 if __name__ == "__main__":

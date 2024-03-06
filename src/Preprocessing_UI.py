@@ -1,9 +1,11 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTextEdit, QListWidget
-from PyQt5.QtGui import QIcon
 import os
 import csv
 import matplotlib.pyplot as plt
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QTextEdit, QListWidget
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtCore import QSize
 from Preprocessing_UI_Layout import Ui_winMain
+import pandas as pd
 
 
 
@@ -32,6 +34,9 @@ class MyMainWindow(QMainWindow):
         # Define icon paths and their corresponding widget attributes
         icon_paths = {
             'ScreeningFile': 'Data_Visualization.png',
+            'filterButton' : 'Filter_Button.png',
+            'addButton' : 'Add_Button.png',
+            'removeButton' : 'Remove_Button.png',
         }
         tab_icon_paths = {
             0: 'main_screening.png',
@@ -42,7 +47,10 @@ class MyMainWindow(QMainWindow):
         # Load icons for individual widgets
         for widget_name, icon_name in icon_paths.items():
             icon_path = os.path.join(icons_dir, icon_name)
-            getattr(self.ui, widget_name).setIcon(QIcon(icon_path))
+            icon = QIcon(icon_path)
+            getattr(self.ui, widget_name).setIcon(icon)
+            # Set the icon size directly
+            getattr(self.ui, widget_name).setIconSize(QSize(40, 40))  # Adjust the width and height as needed
         # Load icons for tab icons
         for tab_index, icon_name in tab_icon_paths.items():
             icon_path = os.path.join(icons_dir, icon_name)
@@ -66,7 +74,8 @@ class MyMainWindow(QMainWindow):
         if filenames:
                 # Add selected file names to the text edit
             self.ui.SelectedFile_listWidget.addItems(filenames)
-         
+        self.updateRemoveButtonState()   
+    
 
     def removeSelectedFiles(self):
         # Get the currently selected items
@@ -77,8 +86,8 @@ class MyMainWindow(QMainWindow):
 
 
     def updateRemoveButtonState(self):
-        # Enable the removeButton if there's selected text, otherwise disable it
-        self.ui.removeButton.setEnabled(bool(self.ui.SelectedFile_listWidget.selectedItems()))
+        selected_items_count = self.ui.SelectedFile_listWidget.count()
+        self.ui.removeButton.setEnabled(selected_items_count > 0)
 
     def visualizeFile(self):
         file_dialog = QFileDialog(self)
@@ -90,24 +99,28 @@ class MyMainWindow(QMainWindow):
             if data:
                 self.ui.figure.clear()
                 ax = self.ui.figure.add_subplot(111)
-                ax.scatter(data["time"], data["adc_counts"])
-                # Adjust x-axis label position:
-                ax.set_xlabel("time (s)", labelpad=15) # Increase labelpad to 15 points
-                ax.set_ylabel("adc_counts")
-                # Optionally, adjust bottom margin for more space:
+                ax.scatter(data["Index"], data["15.0"])
+                ax.set_xlabel("Index", labelpad=15, fontsize=12)
+                ax.set_ylabel("15.0", fontsize=12)
+
                 plt.subplots_adjust(bottom=0.25)
                 self.ui.canvas.draw()
 
     def read_csv(self, filename):
         try:
-            with open(filename, 'r') as file:
-                reader = csv.DictReader(file)
-                data = {"time": [], "adc_counts": []}
-                for row in reader:
-                    data["time"].append(float(row["time"]))
-                    data["adc_counts"].append(float(row["adc_counts"]))
+            # Read CSV file using pandas
+            df = pd.read_csv(filename, sep=';', decimal=',')
+    
+            # Extract required columns
+            data = {
+                "Index": df.index.tolist(),  # Use the DataFrame index as x-axis values
+                "15.0": df["15.0"].astype(float).tolist()
+            }
+    
+            # Set plot label
             filename_without_path = os.path.basename(filename)
-            self.ui.Plot_label.setText(f"Bright Cycle Preview:{filename_without_path}")
+            self.ui.Plot_label.setText(f"Preview: {filename_without_path}")
+    
             return data
         except Exception as e:
             print("Error reading CSV:", e)
@@ -118,5 +131,6 @@ if __name__ == "__main__":
     import sys
     app = QApplication(sys.argv)
     window = MyMainWindow()
+    window.setWindowIcon(QIcon(r'C:\Users\Leyla Roohisefat\DataVisualization\src\icons\app_icon.ico'))
     window.show()
     sys.exit(app.exec_())
