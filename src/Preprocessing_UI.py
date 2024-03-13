@@ -102,6 +102,7 @@ class MyMainWindow(QMainWindow):
             return None
 
 
+
     def filterData(self):
         try:
             last_100_data = []
@@ -114,6 +115,7 @@ class MyMainWindow(QMainWindow):
         except Exception as e:
             print("Error reading CSV:", e)
             return None
+
 
     def save_last_100_data(self, data_list, file_prefix):
         try:
@@ -131,9 +133,16 @@ class MyMainWindow(QMainWindow):
             if last_100_data is not None:
                 for index in range(self.ui.SelectedFile_listWidget.count()):
                     filename = self.ui.SelectedFile_listWidget.item(index).text()
-                    self.save_last_100_data(last_100_data, f"{filename}_last_100.csv")
+                    file_data = last_100_data[index]  # Get the corresponding data for the current file
+                    if file_data is not None:
+                        self.save_last_100_data([file_data], f"{filename}_last_100.csv")  # Pass file_data as a list
+                        prefix = f"{filename}_last_100.csv"
+                    self.ui.FilteredFile_listWidget.addItems([f"{prefix.rstrip('_last_100.csv')}_last_100_1.csv"])
+
         except Exception as e:
             print("Error saving last 100 data:", e)
+
+
 
 if __name__ == "__main__":
     import sys
