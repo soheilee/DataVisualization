@@ -1,23 +1,18 @@
 import os
-import csv
 import pandas as pd
 import matplotlib.pyplot as plt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QListWidget
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize
 from Preprocessing_UI_Layout import Ui_winMain
 
 class MyMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        # Setup UI from the generated class
         self.ui = Ui_winMain()
         self.ui.setupUi(self)
-        # Load icons
         self.load_icons()
-        # Connect signals to slots
         self.connect_signals()
-        # Enable multi-selection mode for the list widget
         self.ui.SelectedFile_listWidget.setSelectionMode(QListWidget.MultiSelection)
 
     def load_icons(self):
@@ -49,6 +44,7 @@ class MyMainWindow(QMainWindow):
         self.ui.ScreeningFile.clicked.connect(self.visualize_file)
         self.ui.addButton.clicked.connect(self.open_file_dialog)
         self.ui.removeButton.clicked.connect(self.remove_selected_files)
+        self.ui.filterButton.clicked.connect(self.saveLast100DataForEachFile)
 
     def open_file_dialog(self):
         file_dialog = QFileDialog(self)
@@ -76,28 +72,68 @@ class MyMainWindow(QMainWindow):
         filename, _ = file_dialog.getOpenFileName(self, "Open CSV File", "", "CSV files (*.csv)")
         if filename:
             data = self.read_csv(filename)
-            if data:
+            if data is not None and not data.empty:  # Check if data is not None and not empty
                 self.ui.figure.clear()
                 ax = self.ui.figure.add_subplot(111)
-                ax.scatter(data["Index"], data["15.0"])
-                ax.set_xlabel("Index", labelpad=15, fontsize=12)
-                ax.set_ylabel("15.0", fontsize=12)
+                if "Methan" in filename:
+                    ax.scatter(data.index, data["15.0"])
+                    ax.set_xlabel("Index", labelpad=15, fontsize=12)
+                    ax.set_ylabel("15.0", fontsize=12)
+                elif "Lachgas" in filename:
+                    ax.scatter(data.index, data["44.0"])
+                    ax.set_xlabel("Index", labelpad=15, fontsize=12)
+                    ax.set_ylabel("44.0", fontsize=12)
+                
                 plt.subplots_adjust(bottom=0.25)
                 self.ui.canvas.draw()
 
     def read_csv(self, filename):
         try:
             df = pd.read_csv(filename, sep=';', decimal=',')
-            data = {
-                "Index": df.index.tolist(),
-                "15.0": df["15.0"].astype(float).tolist()
-            }
+            if "Methan" in filename:
+                data = df[["15.0", "19.0"]]
+            elif "Lachgas" in filename:
+                data = df[["44.0", "19.0"]]
             filename_without_path = os.path.basename(filename)
             self.ui.Plot_label.setText(f"Preview: {filename_without_path}")
             return data
         except Exception as e:
             print("Error reading CSV:", e)
             return None
+
+
+    def filterData(self):
+        try:
+            last_100_data = []
+            file_names = [self.ui.SelectedFile_listWidget.item(index).text() for index in range(self.ui.SelectedFile_listWidget.count())]
+            for filename in file_names:
+                data = self.read_csv(filename)
+                if data is not None:
+                    last_100_data.append(data.iloc[-100:, :])
+            return last_100_data
+        except Exception as e:
+            print("Error reading CSV:", e)
+            return None
+
+    def save_last_100_data(self, data_list, file_prefix):
+        try:
+            for i, data in enumerate(data_list):
+                filename = f"{file_prefix.rstrip('_last_100.csv')}_last_100_{i+1}.csv"
+                data.to_csv(filename, index=False)
+                print(f"Saved last 100 data to {filename}")
+        except Exception as e:
+            print("Error saving CSV:", e)
+
+    
+    def saveLast100DataForEachFile(self):
+        try:
+            last_100_data = self.filterData()
+            if last_100_data is not None:
+                for index in range(self.ui.SelectedFile_listWidget.count()):
+                    filename = self.ui.SelectedFile_listWidget.item(index).text()
+                    self.save_last_100_data(last_100_data, f"{filename}_last_100.csv")
+        except Exception as e:
+            print("Error saving last 100 data:", e)
 
 if __name__ == "__main__":
     import sys
