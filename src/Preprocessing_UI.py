@@ -44,7 +44,7 @@ class MyMainWindow(QMainWindow):
         self.ui.ScreeningFile.clicked.connect(self.visualize_file)
         self.ui.addButton.clicked.connect(self.open_file_dialog)
         self.ui.removeButton.clicked.connect(self.remove_selected_files)
-        self.ui.filterButton.clicked.connect(self.saveLast100DataForEachFile)
+        self.ui.filterButton.clicked.connect(self.save_last_100_data_for_each_file)
 
     def open_file_dialog(self):
         file_dialog = QFileDialog(self)
@@ -72,7 +72,7 @@ class MyMainWindow(QMainWindow):
         filename, _ = file_dialog.getOpenFileName(self, "Open CSV File", "", "CSV files (*.csv)")
         if filename:
             data = self.read_csv(filename)
-            if data is not None and not data.empty:  # Check if data is not None and not empty
+            if data is not None and not data.empty:  
                 self.ui.figure.clear()
                 ax = self.ui.figure.add_subplot(111)
                 if "Methan" in filename:
@@ -83,7 +83,6 @@ class MyMainWindow(QMainWindow):
                     ax.scatter(data.index, data["44.0"])
                     ax.set_xlabel("Index", labelpad=15, fontsize=12)
                     ax.set_ylabel("44.0", fontsize=12)
-                
                 plt.subplots_adjust(bottom=0.25)
                 self.ui.canvas.draw()
 
@@ -101,9 +100,7 @@ class MyMainWindow(QMainWindow):
             print("Error reading CSV:", e)
             return None
 
-
-
-    def filterData(self):
+    def filter_data(self):
         try:
             last_100_data = []
             file_names = [self.ui.SelectedFile_listWidget.item(index).text() for index in range(self.ui.SelectedFile_listWidget.count())]
@@ -116,33 +113,27 @@ class MyMainWindow(QMainWindow):
             print("Error reading CSV:", e)
             return None
 
-
     def save_last_100_data(self, data_list, file_prefix):
         try:
             for i, data in enumerate(data_list):
                 filename = f"{file_prefix.rstrip('_last_100.csv')}_last_100_{i+1}.csv"
                 data.to_csv(filename, index=False)
-                print(f"Saved last 100 data to {filename}")
         except Exception as e:
             print("Error saving CSV:", e)
 
-    
-    def saveLast100DataForEachFile(self):
+    def save_last_100_data_for_each_file(self):
         try:
-            last_100_data = self.filterData()
+            last_100_data = self.filter_data()
             if last_100_data is not None:
                 for index in range(self.ui.SelectedFile_listWidget.count()):
                     filename = self.ui.SelectedFile_listWidget.item(index).text()
-                    file_data = last_100_data[index]  # Get the corresponding data for the current file
+                    file_data = last_100_data[index]  
                     if file_data is not None:
-                        self.save_last_100_data([file_data], f"{filename}_last_100.csv")  # Pass file_data as a list
+                        self.save_last_100_data([file_data], f"{filename}_last_100.csv")  
                         prefix = f"{filename}_last_100.csv"
                     self.ui.FilteredFile_listWidget.addItems([f"{prefix.rstrip('_last_100.csv')}_last_100_1.csv"])
-
         except Exception as e:
             print("Error saving last 100 data:", e)
-
-
 
 if __name__ == "__main__":
     import sys
