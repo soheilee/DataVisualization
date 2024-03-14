@@ -90,9 +90,9 @@ class MyMainWindow(QMainWindow):
         try:
             df = pd.read_csv(filename, sep=';', decimal=',')
             if "Methan" in filename:
-                data = df[["15.0", "19.0"]]
+                data = df[["15.0", "19.0","40.0","44.0"]]
             elif "Lachgas" in filename:
-                data = df[["44.0", "19.0"]]
+                data = df[["30.0", "19.0", "40.0", "44.0"]]
             filename_without_path = os.path.basename(filename)
             self.ui.Plot_label.setText(f"Preview: {filename_without_path}")
             return data
@@ -115,25 +115,65 @@ class MyMainWindow(QMainWindow):
 
     def save_last_100_data(self, data_list, file_prefix):
         try:
+            script_directory = os.path.dirname(__file__)
+            output_directory = os.path.join(script_directory, 'last_100_data')
+
+            # Print the output directory for debugging
+            print("Output directory:", output_directory)
+
+            # Create the directory if it doesn't exist
+            if not os.path.exists(output_directory):
+                os.makedirs(output_directory)
+
             for i, data in enumerate(data_list):
                 filename = f"{file_prefix.rstrip('_last_100.csv')}_last_100_{i+1}.csv"
-                data.to_csv(filename, index=False)
+                output_file = os.path.join(output_directory, filename)
+                data.to_csv(output_file, index=False)
+                    
         except Exception as e:
             print("Error saving CSV:", e)
+
+
+
+    def concatenate_csv(self):
+        try:
+            # Get all CSV files with '_last_100.csv' in their names
+            script_directory = os.path.dirname(__file__)
+            output_directory = os.path.join(script_directory, 'last_100_data')
+            csv_files = [file for file in os.listdir(output_directory)]
+
+            # Concatenate rows from all CSV files
+            concatenated_df = pd.DataFrame()  # Initialize an empty DataFrame
+            for file in csv_files:
+                df = pd.read_csv(os.path.join(output_directory, file))
+                df = df.reset_index(drop=True)  # Reset index
+                concatenated_df = pd.concat([concatenated_df, df], axis=0, ignore_index=True)
+
+            concatenated_filename = os.path.join(output_directory, "15°C_Concatenated.csv")
+            concatenated_df.to_csv(concatenated_filename, index=False)
+
+        except Exception as e:
+            print("Error concatenating CSV files:", e)
+
 
     def save_last_100_data_for_each_file(self):
         try:
             last_100_data = self.filter_data()
             if last_100_data is not None:
-                for index in range(self.ui.SelectedFile_listWidget.count()):
-                    filename = self.ui.SelectedFile_listWidget.item(index).text()
-                    file_data = last_100_data[index]  
-                    if file_data is not None:
-                        self.save_last_100_data([file_data], f"{filename}_last_100.csv")  
-                        prefix = f"{filename}_last_100.csv"
-                    self.ui.FilteredFile_listWidget.addItems([f"{prefix.rstrip('_last_100.csv')}_last_100_1.csv"])
+                output_directory = os.path.join(os.path.dirname(__file__), 'last_100_data')
+                for index, data in enumerate(last_100_data):
+                    output_filename = self.ui.SelectedFile_listWidget.item(index).text() 
+                    file_name_without_extension, file_extension = os.path.splitext(output_filename)
+                    output_filename = os.path.basename(file_name_without_extension)+"_last_100.csv"
+                    output_file = os.path.join(output_directory, output_filename)
+                    self.save_last_100_data([data], output_file)
+                    self.ui.FilteredFile_listWidget.addItems([output_filename])
+            self.concatenate_csv()
         except Exception as e:
             print("Error saving last 100 data:", e)
+
+
+    
 
 if __name__ == "__main__":
     import sys
