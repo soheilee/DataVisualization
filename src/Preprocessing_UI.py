@@ -137,7 +137,7 @@ class MyMainWindow(QMainWindow):
             # Get all CSV files with '_last_100.csv' in their names
             script_directory = os.path.dirname(__file__)
             output_directory = os.path.join(script_directory, 'last_100_data')
-            temperature_list = [f"{temp}°C" for temp in range(10, 21, 5)]
+            temperature_list = [f"{temp}°C" for temp in {10,12,15,20}]
             for temperature in temperature_list:
                 csv_files = [file for file in os.listdir(output_directory) if file.endswith('.csv') and temperature in file]
                 # Concatenate rows from all CSV files
@@ -153,7 +153,7 @@ class MyMainWindow(QMainWindow):
                     concatenated_filename = os.path.join(output_directory, f"Lachgas1%_{temperature}_Concatenated.csv")
                     concatenated_df.to_csv(concatenated_filename, index=False)
                 elif "Methan0,1%" in file:
-                    concatenated_filename = os.path.join(output_directory, f"Methan0,5%_{temperature}_Concatenated.csv")
+                    concatenated_filename = os.path.join(output_directory, f"Methan0,1%_{temperature}_Concatenated.csv")
                     concatenated_df.to_csv(concatenated_filename, index=False)
                 elif "Methan0,5%" in file:
                     concatenated_filename = os.path.join(output_directory, f"Methan0,5%_{temperature}_Concatenated.csv")
