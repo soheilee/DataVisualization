@@ -118,9 +118,6 @@ class MyMainWindow(QMainWindow):
             script_directory = os.path.dirname(__file__)
             output_directory = os.path.join(script_directory, 'last_100_data')
 
-            # Print the output directory for debugging
-            print("Output directory:", output_directory)
-
             # Create the directory if it doesn't exist
             if not os.path.exists(output_directory):
                 os.makedirs(output_directory)
@@ -140,17 +137,30 @@ class MyMainWindow(QMainWindow):
             # Get all CSV files with '_last_100.csv' in their names
             script_directory = os.path.dirname(__file__)
             output_directory = os.path.join(script_directory, 'last_100_data')
-            csv_files = [file for file in os.listdir(output_directory)]
-
-            # Concatenate rows from all CSV files
-            concatenated_df = pd.DataFrame()  # Initialize an empty DataFrame
-            for file in csv_files:
-                df = pd.read_csv(os.path.join(output_directory, file))
-                df = df.reset_index(drop=True)  # Reset index
-                concatenated_df = pd.concat([concatenated_df, df], axis=0, ignore_index=True)
-
-            concatenated_filename = os.path.join(output_directory, "15°C_Concatenated.csv")
-            concatenated_df.to_csv(concatenated_filename, index=False)
+            temperature_list = [f"{temp}°C" for temp in range(10, 21, 5)]
+            for temperature in temperature_list:
+                csv_files = [file for file in os.listdir(output_directory) if file.endswith('.csv') and temperature in file]
+                # Concatenate rows from all CSV files
+                concatenated_df = pd.DataFrame()  # Initialize an empty DataFrame
+                for file in csv_files:
+                    df = pd.read_csv(os.path.join(output_directory, file))
+                    df = df.reset_index(drop=True)  # Reset index
+                    concatenated_df = pd.concat([concatenated_df, df], axis=0, ignore_index=True)
+                if "Lachgas0,5%" in file:
+                    concatenated_filename = os.path.join(output_directory, f"Lachgas0,5%_{temperature}_Concatenated.csv")
+                    concatenated_df.to_csv(concatenated_filename, index=False)
+                elif "Lachgas1%" in file:
+                    concatenated_filename = os.path.join(output_directory, f"Lachgas1%_{temperature}_Concatenated.csv")
+                    concatenated_df.to_csv(concatenated_filename, index=False)
+                elif "Methan0,1%" in file:
+                    concatenated_filename = os.path.join(output_directory, f"Methan0,5%_{temperature}_Concatenated.csv")
+                    concatenated_df.to_csv(concatenated_filename, index=False)
+                elif "Methan0,5%" in file:
+                    concatenated_filename = os.path.join(output_directory, f"Methan0,5%_{temperature}_Concatenated.csv")
+                    concatenated_df.to_csv(concatenated_filename, index=False)
+                elif "Methan1%" in file:
+                    concatenated_filename = os.path.join(output_directory, f"Methan1%_{temperature}_Concatenated.csv")
+                    concatenated_df.to_csv(concatenated_filename, index=False)
 
         except Exception as e:
             print("Error concatenating CSV files:", e)
